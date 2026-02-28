@@ -19,7 +19,7 @@ resource "helm_release" "aws_load_balancer_controller" {
 
   set {
     name  = "vpcId"
-    value = module.kubernetes.cluster_network.internal.network[0].vpc_id
+    value = local.vpc_id
   }
 
   set {

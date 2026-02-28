@@ -9,4 +9,6 @@ locals {
   prefix = "hyma-mds"
   region = "eu-west-1"
   dns_zone = "fcussac.app.hymaia.com"
+  vpc_id = module.kubernetes.cluster_network.internal.network[0].vpc_id
+  subnet_group_name = module.kubernetes.cluster_network.internal.network[0].database_subnet_group_name
 }
