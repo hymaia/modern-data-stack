@@ -106,6 +106,11 @@ locals {
       namespace = "external-secrets"
       sa_name   = "external-secrets"
     },
+    {
+      name      = "airbyte"
+      namespace = "airbyte"
+      sa_name   = "airbyte-admin"
+    },
   ] : sa.name => jsonencode({
     Version = "2012-10-17"
     Statement = [{
@@ -120,46 +125,6 @@ locals {
       }
     }]
   }) }
-}
-
-resource "aws_iam_role" "aws_lb_controller" {
-  name               = "${local.prefix}-aws-lb-controller"
-  assume_role_policy = local.irsa_assume_policy["aws-lb-controller"]
-}
-
-resource "aws_iam_policy" "aws_lb_controller" {
-  name   = "${local.prefix}-aws-lb-controller"
-  policy = file("${path.module}/policies/aws-lb-controller.json")
-}
-
-resource "aws_iam_role_policy_attachment" "aws_lb_controller" {
-  role       = aws_iam_role.aws_lb_controller.name
-  policy_arn = aws_iam_policy.aws_lb_controller.arn
-}
-
-resource "aws_iam_role" "external_dns" {
-  name               = "${local.prefix}-external-dns"
-  assume_role_policy = local.irsa_assume_policy["external-dns"]
-}
-
-resource "aws_iam_role_policy" "external_dns" {
-  name = "${local.prefix}-external-dns"
-  role = aws_iam_role.external_dns.id
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect   = "Allow"
-        Action   = ["route53:ChangeResourceRecordSets"]
-        Resource = ["arn:aws:route53:::hostedzone/*"]
-      },
-      {
-        Effect   = "Allow"
-        Action   = ["route53:ListHostedZones", "route53:ListResourceRecordSets", "route53:ListTagsForResource"]
-        Resource = ["*"]
-      },
-    ]
-  })
 }
 
 resource "aws_iam_role" "external_secrets" {

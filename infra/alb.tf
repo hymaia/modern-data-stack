@@ -37,3 +37,18 @@ resource "helm_release" "aws_load_balancer_controller" {
     value = aws_iam_role.aws_lb_controller.arn
   }
 }
+
+resource "aws_iam_role" "aws_lb_controller" {
+  name               = "${local.prefix}-aws-lb-controller"
+  assume_role_policy = local.irsa_assume_policy["aws-lb-controller"]
+}
+
+resource "aws_iam_policy" "aws_lb_controller" {
+  name   = "${local.prefix}-aws-lb-controller"
+  policy = file("${path.module}/policies/aws-lb-controller.json")
+}
+
+resource "aws_iam_role_policy_attachment" "aws_lb_controller" {
+  role       = aws_iam_role.aws_lb_controller.name
+  policy_arn = aws_iam_policy.aws_lb_controller.arn
+}

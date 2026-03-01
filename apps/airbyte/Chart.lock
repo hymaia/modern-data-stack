@@ -1,0 +1,6 @@
+dependencies:
+- name: airbyte
+  repository: https://airbytehq.github.io/charts
+  version: 2.0.19
+digest: sha256:ca7a91ec67ea3a807c971012344bb39f43e92586f537c96b8a31019773702404
+generated: "2026-03-01T12:46:35.90226259+01:00"

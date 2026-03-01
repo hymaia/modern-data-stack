@@ -1,0 +1,7 @@
+apiVersion: v2
+name: dagster-wrapper
+version: 0.1.0
+dependencies:
+  - name: airbyte
+    version: "2.0.19"
+    repository: "https://airbytehq.github.io/charts"

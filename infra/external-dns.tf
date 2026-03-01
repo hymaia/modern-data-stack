@@ -38,3 +38,28 @@ resource "helm_release" "external_dns" {
     value = aws_iam_role.external_dns.arn
   }
 }
+
+resource "aws_iam_role" "external_dns" {
+  name               = "${local.prefix}-external-dns"
+  assume_role_policy = local.irsa_assume_policy["external-dns"]
+}
+
+resource "aws_iam_role_policy" "external_dns" {
+  name = "${local.prefix}-external-dns"
+  role = aws_iam_role.external_dns.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = ["route53:ChangeResourceRecordSets"]
+        Resource = ["arn:aws:route53:::hostedzone/*"]
+      },
+      {
+        Effect   = "Allow"
+        Action   = ["route53:ListHostedZones", "route53:ListResourceRecordSets", "route53:ListTagsForResource"]
+        Resource = ["*"]
+      },
+    ]
+  })
+}

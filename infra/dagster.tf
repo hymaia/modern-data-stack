@@ -1,5 +1,3 @@
-# infra/dagster-rds.tf
-
 resource "aws_rds_cluster" "dagster" {
   cluster_identifier  = "dagster"
   engine              = "aurora-postgresql"

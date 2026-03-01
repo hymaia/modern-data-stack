@@ -6,3 +6,12 @@ resource "local_file" "dagster_values" {
     ecr_user_code   = aws_ecr_repository.dagster_user_code.repository_url
   })
 }
+
+resource "local_file" "airbyte_values" {
+  filename = "${path.module}/../apps/airbyte/values.yaml"
+  content  = templatefile("${path.module}/templates/airbyte-values.yaml.tpl", {
+    certificate_arn = data.aws_acm_certificate.fcussac_app.arn
+    rds_endpoint    = aws_rds_cluster_instance.airbyte.endpoint
+    role_iam_arn    = aws_iam_role.airbyte_s3.arn
+  })
+}
