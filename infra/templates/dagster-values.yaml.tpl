@@ -8,9 +8,16 @@ dagster:
     postgresqlDatabase: "dagster"
 
   dagster-user-deployments:
-    enabled: true
-    enableSubchart: true
-    deployments: []
+    deployments:
+      - name: "discover-dagster"
+        image:
+          repository: "${ecr_user_code}"
+          tag: "latest"
+          pullPolicy: Always
+        dagsterApiGrpcArgs:
+          - "-m"
+          - "discover_dagster.definitions"
+        port: 3030
 
   ingress:
     enabled: true

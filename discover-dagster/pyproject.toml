@@ -1,0 +1,30 @@
+[project]
+name = "discover_dagster"
+requires-python = ">=3.10,<3.15"
+version = "0.1.0"
+dependencies = [
+    "dagster==1.12.17",
+]
+
+[dependency-groups]
+dev = [
+    "dagster-webserver",
+    "dagster-dg-cli",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+force-include = { "pyproject.toml" = "pyproject.toml" }
+packages = ["src/discover_dagster"]
+
+[tool.dg]
+directory_type = "project"
+
+[tool.dg.project]
+root_module = "discover_dagster"
+registry_modules = [
+    "discover_dagster.components.*",
+]
