@@ -1,0 +1,6 @@
+dependencies:
+- name: metabase
+  repository: https://pmint93.github.io/helm-charts
+  version: 2.24.2
+digest: sha256:aaa91b3042dd24183c5000d440ef3803b8660bffa6e8ee11ed90d088bc019d32
+generated: "2026-03-02T16:48:05.415730135+01:00"

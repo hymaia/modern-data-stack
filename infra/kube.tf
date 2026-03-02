@@ -107,6 +107,11 @@ locals {
       sa_name   = "external-secrets"
     },
     {
+      name      = "metabase"
+      namespace = "metabase"
+      sa_name   = "metabase"
+    },
+    {
       name      = "airbyte"
       namespace = "airbyte"
       sa_name   = "airbyte-admin"

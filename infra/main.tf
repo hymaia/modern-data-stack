@@ -15,3 +15,12 @@ resource "local_file" "airbyte_values" {
     role_iam_arn    = aws_iam_role.airbyte_s3.arn
   })
 }
+
+resource "local_file" "metabase_values" {
+  filename = "${path.module}/../apps/metabase/values.yaml"
+  content  = templatefile("${path.module}/templates/metabase-values.yaml.tpl", {
+    certificate_arn = data.aws_acm_certificate.fcussac_app.arn
+    rds_endpoint    = aws_rds_cluster_instance.metabase.endpoint
+    role_iam_arn    = aws_iam_role.metabase.arn
+  })
+}

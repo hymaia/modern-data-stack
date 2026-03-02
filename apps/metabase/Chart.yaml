@@ -1,0 +1,7 @@
+apiVersion: v2
+name: dagster-wrapper
+version: 0.1.0
+dependencies:
+  - name: metabase
+    version: "2.24.2"
+    repository: "https://pmint93.github.io/helm-charts"
