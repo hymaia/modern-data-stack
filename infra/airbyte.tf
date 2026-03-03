@@ -63,10 +63,6 @@ resource "aws_secretsmanager_secret_version" "airbyte_db" {
   })
 }
 
-resource "aws_s3_bucket" "airbyte" {
-  bucket = "hymaia-airbyte-storage"
-}
-
 resource "aws_iam_policy" "airbyte_s3" {
   name = "airbyte-s3"
   policy = jsonencode({
@@ -75,8 +71,8 @@ resource "aws_iam_policy" "airbyte_s3" {
       Effect = "Allow"
       Action = ["s3:*"]
       Resource = [
-        aws_s3_bucket.airbyte.arn,
-        "${aws_s3_bucket.airbyte.arn}/*"
+        aws_s3_bucket.raw.arn,
+        "${aws_s3_bucket.raw.arn}/*"
       ]
     }]
   })

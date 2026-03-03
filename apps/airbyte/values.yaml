@@ -10,11 +10,11 @@ global:
       region: eu-west-1
       authenticationType: instanceProfile
     bucket:
-      log: hymaia-airbyte-storage
-      auditLogging: hymaia-airbyte-storage
-      state: hymaia-airbyte-storage
-      workloadOutput: hymaia-airbyte-storage
-      activityPayload: hymaia-airbyte-storage
+      log: hymaia-datalake-raw
+      auditLogging: hymaia-datalake-raw
+      state: hymaia-datalake-raw
+      workloadOutput: hymaia-datalake-raw
+      activityPayload: hymaia-datalake-raw
 
   database:
     type: external
