@@ -1,0 +1,64 @@
+version: 2
+
+models:
+  - name: stg_github__commits
+    description: "Commits nettoyés depuis la source GitHub"
+    columns:
+      - name: commit_sha
+        tests:
+          - unique
+          - not_null
+      - name: author_name
+        tests:
+          - not_null
+      - name: committed_at
+        tests:
+          - not_null
+      - name: repository_name
+        tests:
+          - not_null
+
+  - name: stg_github__pull_requests
+    description: "Pull requests nettoyées depuis la source GitHub"
+    columns:
+      - name: pr_id
+        tests:
+          - unique
+          - not_null
+      - name: state
+        tests:
+          - accepted_values:
+              values: ['open', 'closed']
+      - name: created_at
+        tests:
+          - not_null
+
+  - name: stg_github__issues
+    description: "Issues nettoyées, PRs exclues"
+    columns:
+      - name: issue_id
+        tests:
+          - unique
+          - not_null
+      - name: state
+        tests:
+          - accepted_values:
+              values: ['open', 'closed']
+
+  - name: stg_github__repositories
+    description: "Repositories GitHub"
+    columns:
+      - name: repository_id
+        tests:
+          - unique
+          - not_null
+      - name: repository_name
+        tests:
+          - not_null
+
+  - name: stg_github__organizations
+    columns:
+      - name: organization_id
+        tests:
+          - unique
+          - not_null

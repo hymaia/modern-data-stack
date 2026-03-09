@@ -179,7 +179,7 @@ resource "aws_athena_workgroup" "main" {
   description = "Workgroup principal pour les requêtes Athena"
 
   configuration {
-    enforce_workgroup_configuration    = true
+    enforce_workgroup_configuration    = false
     publish_cloudwatch_metrics_enabled = true
 
     result_configuration {

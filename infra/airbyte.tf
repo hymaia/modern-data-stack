@@ -67,14 +67,54 @@ resource "aws_iam_policy" "airbyte_s3" {
   name = "airbyte-s3"
   policy = jsonencode({
     Version = "2012-10-17"
-    Statement = [{
-      Effect = "Allow"
-      Action = ["s3:*"]
-      Resource = [
-        aws_s3_bucket.raw.arn,
-        "${aws_s3_bucket.raw.arn}/*"
-      ]
-    }]
+    Statement = [
+      {
+        Sid    = "S3Access"
+        Effect = "Allow"
+        Action = [
+          "s3:ListAllMyBuckets",
+          "s3:GetObject*",
+          "s3:PutObject",
+          "s3:PutObjectAcl",
+          "s3:DeleteObject",
+          "s3:ListBucket*",
+        ]
+        Resource = [
+          aws_s3_bucket.raw.arn,
+          "${aws_s3_bucket.raw.arn}/*",
+        ]
+      },
+      {
+        Sid    = "GlueAccess"
+        Effect = "Allow"
+        Action = [
+          "glue:TagResource",
+          "glue:UnTagResource",
+          "glue:BatchCreatePartition",
+          "glue:BatchDeletePartition",
+          "glue:BatchDeleteTable",
+          "glue:BatchGetPartition",
+          "glue:CreateDatabase",
+          "glue:CreateTable",
+          "glue:CreatePartition",
+          "glue:DeletePartition",
+          "glue:DeleteTable",
+          "glue:GetDatabase",
+          "glue:GetPartition",
+          "glue:GetPartitions",
+          "glue:GetTable",
+          "glue:GetTables",
+          "glue:UpdateDatabase",
+          "glue:UpdatePartition",
+          "glue:UpdateTable",
+        ]
+        Resource = [
+          "arn:aws:glue:eu-west-1:662195598891:catalog",
+          "arn:aws:glue:eu-west-1:662195598891:database/*",
+          "arn:aws:glue:eu-west-1:662195598891:table/*/*",
+        ]
+      }
+    ]
   })
 }
 

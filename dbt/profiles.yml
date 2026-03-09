@@ -1,0 +1,11 @@
+hymaia_mds:
+  target: dev
+  outputs:
+    dev:
+      type: athena
+      s3_staging_dir: "s3://raw-athena-results/dbt/"
+      region_name: eu-west-1
+      database: AwsDataCatalog
+      schema: hymaia_datalake_staging
+      work_group: hymaia-datalake-workgroup
+      threads: 4

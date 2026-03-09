@@ -1,0 +1,12 @@
+version: 2
+
+sources:
+  - name: github
+    database: AwsDataCatalog
+    schema: hymaia_datalake_raw
+    tables:
+      - name: commits
+      - name: pull_requests
+      - name: issues
+      - name: repositories
+      - name: organizations

@@ -1,0 +1,51 @@
+version: 2
+
+models:
+  - name: dim_contributors
+    description: "Dimension contributeurs — agrège commits, PRs et issues par auteur"
+    columns:
+      - name: contributor_login
+        tests:
+          - unique
+          - not_null
+      - name: total_commits
+        tests:
+          - not_null
+
+  - name: dim_repositories
+    description: "Dimension repositories GitHub"
+    columns:
+      - name: repository_id
+        tests:
+          - unique
+          - not_null
+
+  - name: fct_commits
+    description: "Table de faits commits — grain = 1 ligne par commit"
+    columns:
+      - name: commit_sha
+        tests:
+          - unique
+          - not_null
+      - name: committed_at
+        tests:
+          - not_null
+      - name: repository_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_repositories')
+              field: repository_id
+
+  - name: fct_pull_requests
+    description: "Table de faits pull requests — grain = 1 ligne par PR"
+    columns:
+      - name: pr_id
+        tests:
+          - unique
+          - not_null
+      - name: repository_id
+        tests:
+          - relationships:
+              to: ref('dim_repositories')
+              field: repository_id
