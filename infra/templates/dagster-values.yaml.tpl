@@ -18,6 +18,15 @@ dagster:
           - "-m"
           - "discover_dagster.definitions"
         port: 3030
+      - name: "github-dbt-project"
+        image:
+          repository: "${dagster_user_code_github_dbt}"
+          tag: "latest"
+          pullPolicy: Always
+        dagsterApiGrpcArgs:
+          - "-m"
+          - "dagster_defs.definitions"
+        port: 3031
 
   ingress:
     enabled: true

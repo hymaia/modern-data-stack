@@ -2,3 +2,4 @@
 .terraform
 *.hcl
 *.iml
+__pycache__

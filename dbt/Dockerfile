@@ -1,15 +1,20 @@
-FROM python:3.11-slim
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
 
-# Install dbt-athena
-RUN pip install --no-cache-dir \
-    dbt-athena-community==1.7.2 \
-    boto3==1.34.51
-
-# Set working directory
 WORKDIR /dbt
 
-# Copy dbt project
-COPY . /dbt/
+COPY pyproject.toml uv.lock ./
+RUN uv sync --no-dev --frozen
 
-# Default command
-CMD ["dbt", "run"]
+COPY dbt_project.yml profiles.yml ./
+COPY models/ ./models/
+COPY macros/ ./macros/
+COPY seeds/ ./seeds/
+COPY snapshots/ ./snapshots/
+COPY tests/ ./tests/
+COPY dagster_defs/ ./dagster_defs/
+
+RUN uv run dbt parse
+
+ENV PATH="/dbt/.venv/bin:$PATH"
+
+CMD ["dagster", "code-server", "start", "--host", "0.0.0.0", "--port", "3031", "--module-name", "dagster_defs.definitions"]

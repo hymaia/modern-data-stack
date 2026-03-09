@@ -5,6 +5,8 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "dagster>=1.12.18",
+    "dagster-dbt>=0.28.18",
     "dbt-athena-community>=1.10.0",
     "dbt-core>=1.11.6",
 ]

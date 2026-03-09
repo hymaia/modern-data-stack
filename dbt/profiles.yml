@@ -6,6 +6,6 @@ hymaia_mds:
       s3_staging_dir: "s3://raw-athena-results/dbt/"
       region_name: eu-west-1
       database: AwsDataCatalog
-      schema: hymaia_datalake_staging
+      schema: hymaia_datalake
       work_group: hymaia-datalake-workgroup
       threads: 4

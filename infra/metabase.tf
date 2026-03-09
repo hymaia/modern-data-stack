@@ -89,10 +89,28 @@ resource "aws_iam_role_policy" "metabase" {
       },
       {
         Effect = "Allow"
-        Action = ["s3:GetObject", "s3:ListBucket", "s3:PutObject"]
+        Action = [
+          "s3:GetBucketLocation",
+          "s3:GetObject",
+          "s3:ListBucket",
+        ]
         Resource = [
           aws_s3_bucket.mart.arn,
           "${aws_s3_bucket.mart.arn}/*"
+        ]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:GetBucketLocation",
+          "s3:GetObject",
+          "s3:ListBucket",
+          "s3:PutObject",
+          "s3:DeleteObject"
+        ]
+        Resource = [
+          aws_s3_bucket.athena_results.arn,
+          "${aws_s3_bucket.athena_results.arn}/*"
         ]
       }
     ]

@@ -28,14 +28,14 @@ models:
     staging:
       +materialized: view
       +database: AwsDataCatalog
-      +schema: hymaia_datalake_staging
+      +schema: staging
       +s3_data_dir: "s3://hymaia-datalake-staging/"
       +s3_data_naming: table
       +tags: ['staging']
     mart:
       +materialized: table
       +database: AwsDataCatalog
-      +schema: hymaia_datalake_mart
+      +schema: mart
       +s3_data_dir: "s3://hymaia-datalake-mart/"
       +s3_data_naming: table
       +tags: ['mart']
