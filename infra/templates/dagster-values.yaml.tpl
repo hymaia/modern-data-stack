@@ -7,6 +7,10 @@ dagster:
     postgresqlUsername: "dagster"
     postgresqlDatabase: "dagster"
 
+  serviceAccount:
+    create: false
+    name: "dagster-code-location"
+
   dagster-user-deployments:
     deployments:
       - name: "discover-dagster"
@@ -41,3 +45,5 @@ dagster:
 
 global:
   postgresqlSecretName: "dagster-postgresql-secret"
+  serviceAccountName: "dagster-code-location"
+  roleIamDagster: "${role_iam_dagster}"

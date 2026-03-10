@@ -112,6 +112,11 @@ locals {
       sa_name   = "metabase"
     },
     {
+      name      = "dagster-code-location-role"
+      namespace = "dagster"
+      sa_name   = "dagster-code-location"
+    },
+    {
       name      = "airbyte"
       namespace = "airbyte"
       sa_name   = "airbyte-admin"

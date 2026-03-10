@@ -6,7 +6,7 @@ from .project import dbt_project
 
 daily_schedule = ScheduleDefinition(
     job=define_asset_job("dbt_daily_job", selection="*"),
-    cron_schedule="0 6 * * *",  # tous les jours à 6h UTC
+    cron_schedule="10 19 * * *",  # tous les jours à 19h UTC
 )
 
 defs = Definitions(

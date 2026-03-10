@@ -105,7 +105,10 @@ resource "aws_iam_role_policy" "dagster_athena" {
           "glue:GetTables",
           "glue:GetPartition",
           "glue:GetPartitions",
-          "glue:BatchGetPartition"
+          "glue:BatchGetPartition",
+          "glue:GetTableVersion",
+          "glue:GetTableVersions",
+          "glue:BatchDeleteTableVersion",
         ]
         Resource = [
           "arn:aws:glue:eu-west-1:662195598891:catalog",
