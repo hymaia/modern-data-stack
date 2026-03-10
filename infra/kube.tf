@@ -14,6 +14,7 @@ module "kubernetes" {
   cluster_network_type = "internal"
 
   cluster_autoscaler_subnet_selector = "1"
+  cluster_autoscaler_create = false
 
   cluster_compute_pool_aws_managed = {
     defaults = {}
