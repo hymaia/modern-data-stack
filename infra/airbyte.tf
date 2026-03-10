@@ -15,8 +15,9 @@ resource "aws_rds_cluster" "airbyte" {
   backup_retention_period = 1
 
   serverlessv2_scaling_configuration {
-    min_capacity = 0.5
-    max_capacity = 2
+    min_capacity = 0.0
+    max_capacity = 2.0
+    seconds_until_auto_pause = 360
   }
 
   tags = {
