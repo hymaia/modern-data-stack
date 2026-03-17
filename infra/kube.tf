@@ -122,6 +122,11 @@ locals {
       namespace = "airbyte"
       sa_name   = "airbyte-admin"
     },
+    {
+      name      = "spark-jobs"
+      namespace = "spark"
+      sa_name   = "spark-jobs"
+    },
   ] : sa.name => jsonencode({
     Version = "2012-10-17"
     Statement = [{

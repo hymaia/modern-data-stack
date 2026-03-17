@@ -6,6 +6,9 @@ terraform {
     helm = {
       source  = "hashicorp/helm"
     }
+    kubernetes = {
+      source = "hashicorp/kubernetes"
+    }
   }
 
   backend "s3" {
@@ -36,5 +39,15 @@ provider "helm" {
       command     = "aws"
       args        = ["eks", "get-token", "--cluster-name", module.kubernetes.cluster[0].cluster_name]
     }
+  }
+}
+
+provider "kubernetes" {
+  host                   = module.kubernetes.cluster[0].cluster_endpoint
+  cluster_ca_certificate = base64decode(module.kubernetes.cluster[0].cluster_certificate_authority_data)
+  exec {
+    api_version = "client.authentication.k8s.io/v1beta1"
+    command     = "aws"
+    args        = ["eks", "get-token", "--cluster-name", module.kubernetes.cluster[0].cluster_name]
   }
 }

@@ -1,0 +1,18 @@
+[project]
+name = "spark-vs-polars"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pyspark>=4.1.1",
+    "setuptools>=82.0.1",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+]

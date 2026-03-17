@@ -26,3 +26,10 @@ resource "local_file" "metabase_values" {
     role_iam_arn    = aws_iam_role.metabase.arn
   })
 }
+
+resource "local_file" "spark_operator_values" {
+  filename = "${path.module}/../apps/spark/values.yaml"
+  content  = templatefile("${path.module}/templates/spark-operator-values.yaml.tpl", {
+    role_iam_arn = aws_iam_role.spark_jobs.arn
+  })
+}
