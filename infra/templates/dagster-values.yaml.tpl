@@ -13,14 +13,14 @@ dagster:
 
   dagster-user-deployments:
     deployments:
-      - name: "discover-dagster"
+      - name: "orchestration-dagster"
         image:
           repository: "${ecr_user_code}"
           tag: "latest"
           pullPolicy: Always
         dagsterApiGrpcArgs:
           - "-m"
-          - "discover_dagster.definitions"
+          - "orchestration_dagster.definitions"
         port: 3030
       - name: "github-dbt-project"
         image:

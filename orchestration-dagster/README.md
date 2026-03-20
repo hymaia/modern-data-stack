@@ -1,4 +1,4 @@
-# discover_dagster
+# orchestration_dagster
 
 ## Getting started
 

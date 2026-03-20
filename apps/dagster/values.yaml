@@ -13,14 +13,14 @@ dagster:
 
   dagster-user-deployments:
     deployments:
-      - name: "discover-dagster"
+      - name: "orchestration-dagster"
         image:
-          repository: "662195598891.dkr.ecr.eu-west-1.amazonaws.com/hymaia/discover-dagster"
+          repository: "662195598891.dkr.ecr.eu-west-1.amazonaws.com/hymaia/orchestration-dagster"
           tag: "latest"
           pullPolicy: Always
         dagsterApiGrpcArgs:
           - "-m"
-          - "discover_dagster.definitions"
+          - "orchestration_dagster.definitions"
         port: 3030
       - name: "github-dbt-project"
         image:

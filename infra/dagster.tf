@@ -192,7 +192,7 @@ resource "aws_iam_role_policy" "dagster_athena" {
 }
 
 resource "aws_ecr_repository" "dagster_user_code" {
-  name = "hymaia/discover-dagster"
+  name = "hymaia/orchestration-dagster"
   image_tag_mutability = "MUTABLE"
   force_delete = true
 }

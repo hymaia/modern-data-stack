@@ -1,0 +1,23 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: dagster-spark-role
+  namespace: spark
+rules:
+  - apiGroups: ["sparkoperator.k8s.io"]
+    resources: ["sparkapplications"]
+    verbs: ["create", "get", "watch", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: dagster-spark-rolebinding
+  namespace: spark
+subjects:
+  - kind: ServiceAccount
+    name: dagster-code-location
+    namespace: dagster
+roleRef:
+  kind: Role
+  name: dagster-spark-role
+  apiGroup: rbac.authorization.k8s.io
