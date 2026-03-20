@@ -7,7 +7,7 @@ spec:
   type: Python
   pythonVersion: "3"
   mode: cluster
-  image: 662195598891.dkr.ecr.eu-west-1.amazonaws.com/hymaia/spark-vs-polars:latest
+  image: 662195598891.dkr.ecr.eu-west-1.amazonaws.com/hymaia/spark-vs-polars
   imagePullPolicy: Always
   mainApplicationFile: local:///app/src/spark_vs_polars/main.py
   sparkVersion: "4.1.1"
@@ -15,7 +15,6 @@ spec:
   sparkConf:
     spark.hadoop.fs.s3a.impl: "org.apache.hadoop.fs.s3a.S3AFileSystem"
     spark.hadoop.fs.s3a.aws.credentials.provider: "software.amazon.awssdk.auth.credentials.WebIdentityTokenFileCredentialsProvider"
-    spark.jars: "local:///app/jars/hadoop-aws-3.4.2.jar,local:///app/jars/bundle-2.40.17.jar"
 
   driver:
     cores: 1

@@ -20,7 +20,7 @@ dagster:
           pullPolicy: Always
         dagsterApiGrpcArgs:
           - "-m"
-          - "discover_dagster.definitions"
+          - "orchestration_dagster.definitions"
         port: 3030
       - name: "github-dbt-project"
         image:

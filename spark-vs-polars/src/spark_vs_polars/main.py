@@ -10,7 +10,7 @@ def main():
     df: DataFrame = spark.read.parquet(config.INPUT_FILE)
     renamed: DataFrame = rename_df(df)
 
-    renamed.write.parquet(config.OUTPUT_FILE)
+    renamed.write.mode("overwrite").parquet(config.OUTPUT_FILE)
 
 
 def rename_df(df: DataFrame) -> DataFrame:

@@ -19,9 +19,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY src/ ./src/
 
-ADD https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.4.2/hadoop-aws-3.4.2.jar /app/jars/
-ADD https://repo1.maven.org/maven2/software/amazon/awssdk/bundle/2.40.17/bundle-2.40.17.jar /app/jars/
-RUN chown -R 185:185 /app
+ADD https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.4.2/hadoop-aws-3.4.2.jar /opt/spark/jars/
+ADD https://repo1.maven.org/maven2/software/amazon/awssdk/bundle/2.40.17/bundle-2.40.17.jar /opt/spark/jars/
+
+RUN chown spark:spark /opt/spark/jars/hadoop-aws-3.4.2.jar /opt/spark/jars/bundle-2.40.17.jar
+RUN chmod 644 /opt/spark/jars/hadoop-aws-3.4.2.jar /opt/spark/jars/bundle-2.40.17.jar
 
 USER 185
 
