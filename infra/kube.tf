@@ -127,6 +127,11 @@ locals {
       namespace = "spark"
       sa_name   = "spark-jobs"
     },
+    {
+      name      = "polars-jobs"
+      namespace = "polars"
+      sa_name   = "polars-jobs"
+    },
   ] : sa.name => jsonencode({
     Version = "2012-10-17"
     Statement = [{

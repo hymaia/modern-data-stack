@@ -47,3 +47,4 @@ global:
   postgresqlSecretName: "dagster-postgresql-secret"
   serviceAccountName: "dagster-code-location"
   roleIamDagster: "${role_iam_dagster}"
+  roleIamPolars: "${role_iam_polars}"

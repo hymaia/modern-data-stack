@@ -6,6 +6,7 @@ dependencies = [
     "dagster-postgres>=0.28.17",
     "dagster==1.12.17",
     "kubernetes>=35.0.0",
+    "dagster-k8s>=0.28.17",
 ]
 
 [dependency-groups]

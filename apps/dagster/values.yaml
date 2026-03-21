@@ -47,3 +47,4 @@ global:
   postgresqlSecretName: "dagster-postgresql-secret"
   serviceAccountName: "dagster-code-location"
   roleIamDagster: "arn:aws:iam::662195598891:role/hyma-mds-dagster-code-location-role"
+  roleIamPolars: "arn:aws:iam::662195598891:role/hyma-mds-polars-jobs"

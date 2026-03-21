@@ -1,7 +1,7 @@
 from pyspark.testing import assertDataFrameEqual
 from pyspark.sql import Row
 from datetime import datetime
-from src.spark_vs_polars.main import rename_df
+from src.spark_vs_polars.spark_main import rename_df
 
 
 def test_rename_df(spark):

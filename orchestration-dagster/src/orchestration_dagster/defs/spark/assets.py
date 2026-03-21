@@ -1,7 +1,7 @@
 from dagster import asset, OpExecutionContext
 from spark.k8s import submit_spark_application, wait_for_spark_application, delete_spark_application
 
-SPARK_IMAGE = "662195598891.dkr.ecr.eu-west-1.amazonaws.com/hymaia/spark-vs-polars"
+SPARK_IMAGE = "662195598891.dkr.ecr.eu-west-1.amazonaws.com/hymaia/spark-vs-polars:spark"
 INPUT_FILE = "s3a://hymaia-datalake-raw/commits/data"
 OUTPUT_FILE = "s3a://hymaia-datalake-staging/spark-vs-polars/spark-outputs/commit"
 

@@ -6,6 +6,7 @@ resource "local_file" "dagster_values" {
     ecr_user_code   = aws_ecr_repository.dagster_user_code.repository_url
     dagster_user_code_github_dbt = aws_ecr_repository.dagster_user_code_github_dbt.repository_url
     role_iam_dagster             = aws_iam_role.dagster_code_location.arn
+    role_iam_polars              = aws_iam_role.polars_jobs.arn
   })
 }
 

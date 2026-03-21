@@ -3,9 +3,13 @@ resource "aws_iam_role" "spark_jobs" {
   assume_role_policy = local.irsa_assume_policy["spark-jobs"]
 }
 
-resource "aws_iam_role_policy" "spark_jobs" {
-  name = "${local.prefix}-spark-jobs"
-  role = aws_iam_role.spark_jobs.id
+resource "aws_iam_role" "polars_jobs" {
+  name               = "${local.prefix}-polars-jobs"
+  assume_role_policy = local.irsa_assume_policy["polars-jobs"]
+}
+
+resource "aws_iam_policy" "data_jobs" {
+  name = "${local.prefix}-data-jobs"
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -50,6 +54,16 @@ resource "aws_iam_role_policy" "spark_jobs" {
       },
     ]
   })
+}
+
+resource "aws_iam_role_policy_attachment" "spark_jobs" {
+  role       = aws_iam_role.spark_jobs.name
+  policy_arn = aws_iam_policy.data_jobs.arn
+}
+
+resource "aws_iam_role_policy_attachment" "polars_jobs" {
+  role       = aws_iam_role.polars_jobs.name
+  policy_arn = aws_iam_policy.data_jobs.arn
 }
 
 resource "kubernetes_namespace_v1" "spark" {
