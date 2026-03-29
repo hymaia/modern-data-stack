@@ -17,6 +17,7 @@ def submit_spark_application(
         executor_memory: str = "512m",
         executor_instances: int = 3,
         spark_conf: dict[str, str] | None = None,
+        node_selector: dict[str, str] | None = None,
 ) -> str:
     config.load_incluster_config()
 
@@ -28,6 +29,17 @@ def submit_spark_application(
     }
 
     k8s_env = [{"name": k, "value": v} for k, v in env.items()]
+    default_node_selector = {"node-role": "spark-worker"}
+    resolved_node_selector = {**default_node_selector, **(node_selector or {})}
+
+    tolerations = [
+        {
+            "key": "spark-vs-polars-worker",
+            "operator": "Equal",
+            "value": "true",
+            "effect": "NoSchedule",
+        }
+    ]
 
     spark_app = {
         "apiVersion": "sparkoperator.k8s.io/v1beta2",
@@ -50,12 +62,16 @@ def submit_spark_application(
                 "memory": driver_memory,
                 "serviceAccount": service_account,
                 "env": k8s_env,
+                "nodeSelector": resolved_node_selector,
+                "tolerations": tolerations,
             },
             "executor": {
                 "cores": executor_cores,
                 "instances": executor_instances,
                 "memory": executor_memory,
                 "env": k8s_env,
+                "nodeSelector": resolved_node_selector,
+                "tolerations": tolerations,
             },
             "restartPolicy": {"type": "Never"},
         },
@@ -76,7 +92,7 @@ def wait_for_spark_application(
         name: str,
         namespace: str = "spark",
         poll_interval: int = 10,
-        timeout: int = 3600,
+        timeout: int = 36000,
 ) -> str:
     config.load_incluster_config()
     crd_api = client.CustomObjectsApi()

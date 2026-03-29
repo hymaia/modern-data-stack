@@ -34,6 +34,29 @@ module "kubernetes" {
         }
         use_custom_launch_template = false
       }
+      spark = {
+        capacity_type = "SPOT"
+        desired_size  = 5
+        min_size      = 0
+        max_size      = 6
+        disk_size     = 100
+        instance_types = ["m5a.4xlarge", "m6a.4xlarge", "m6i.4xlarge"]
+        labels = {
+          "node-type" = "spot"
+          "node-role"  = "spark-worker"
+        }
+        # taints = {
+        #   spark-worker = {
+        #     key    = "spark-vs-polars-worker"
+        #     value  = "true"
+        #     effect = "NO_SCHEDULE"
+        #   }
+        # }
+        update_config = {
+          max_unavailable_percentage = 30
+        }
+        use_custom_launch_template = false
+      }
     }
   }
 

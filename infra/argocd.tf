@@ -9,6 +9,16 @@ resource "helm_release" "argocd" {
   atomic           = true
 
   set {
+    name  = "global.image.repository"
+    value = "argoproj/argocd"
+  }
+
+  set {
+    name  = "global.image.tag"
+    value = "v3.0.5"
+  }
+
+  set {
     name  = "server.ingress.enabled"
     value = "true"
   }

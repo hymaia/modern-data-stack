@@ -1,0 +1,78 @@
+import sys
+from datetime import date, timedelta
+from awsglue.utils import getResolvedOptions
+from pyspark.context import SparkContext
+from awsglue.context import GlueContext
+from pyspark.sql import functions as F
+from pyspark.sql.types import *
+
+# ── Args ─────────────────────────────────────────────────────────────────────
+args = getResolvedOptions(sys.argv, ['JOB_NAME', 'OUTPUT_PATH', 'ROWS_PER_DATE', 'START_DATE', 'END_DATE'])
+
+sc          = SparkContext()
+glueContext = GlueContext(sc)
+spark       = glueContext.spark_session
+
+OUTPUT_PATH   = args['OUTPUT_PATH']
+ROWS_PER_DATE = int(args['ROWS_PER_DATE'])
+START_DATE    = args['START_DATE']   # "yyyy-mm-dd" — reste string, utilisé dans les expressions Spark
+END_DATE      = args['END_DATE']
+
+# ── Nombre de jours (seul calcul sur le driver, ultra léger) ─────────────────
+n_days = (date.fromisoformat(END_DATE) - date.fromisoformat(START_DATE)).days + 1
+total_rows = n_days * ROWS_PER_DATE
+
+CANCELLATION_REASONS = ["out_of_stock", "user_request", "fraud", "payment_failed"]
+
+# ── Génération 100% distribuée ────────────────────────────────────────────────
+df = (
+    spark.range(0, total_rows, numPartitions=2000)
+
+    # dt : dérivée depuis l'index de la row
+    .withColumn("dt",
+                F.date_add(F.lit(START_DATE).cast("date"), (F.col("id") / ROWS_PER_DATE).cast("int"))
+                .cast("string")
+                )
+
+    # placed_at : timestamp réaliste sur la journée
+    .withColumn("placed_at",
+                F.concat(
+                    F.col("dt"),
+                    F.lit("T"),
+                    F.lpad((F.rand() * 23).cast("int").cast("string"), 2, "0"), F.lit(":"),
+                    F.lpad((F.rand() * 59).cast("int").cast("string"), 2, "0"), F.lit(":"),
+                    F.lpad((F.rand() * 59).cast("int").cast("string"), 2, "0"), F.lit("Z"),
+                )
+                )
+
+    # delivered_at : 1 à 7 jours après dt
+    .withColumn("delivered_at",
+                F.date_add(F.col("dt").cast("date"), (F.rand() * 7 + 1).cast("int"))
+                .cast("string")
+                )
+
+    .select(
+        F.expr("uuid()")                                          .alias("uid"),
+        F.col("dt"),
+        F.lit("ORDER")                                            .alias("entity_type"),
+        F.expr("uuid()")                                          .alias("order_id"),
+        F.expr("uuid()")                                          .alias("user_id"),
+        F.col("placed_at"),
+        F.col("placed_at")                                        .alias("updated_at"),
+        F.col("delivered_at"),
+        (F.rand() * 19 + 1).cast("int")                          .alias("item_count"),
+        F.element_at(
+            F.array(*[F.lit(r) for r in CANCELLATION_REASONS]),
+            (F.rand() * 4 + 1).cast("int")
+        )                                                         .alias("cancellation_reason"),
+    )
+)
+
+# ── Écriture partitionnée par dt ──────────────────────────────────────────────
+df.repartition("dt") \
+    .write \
+    .mode("overwrite") \
+    .partitionBy("dt") \
+    .json(OUTPUT_PATH)
+
+print(f"✅ Done — {total_rows:,} records written to {OUTPUT_PATH}")

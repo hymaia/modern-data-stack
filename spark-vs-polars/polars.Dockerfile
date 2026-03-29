@@ -17,6 +17,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY src/ ./src/
 
-ENV PYTHONPATH="/app"
+ENV PYTHONPATH="/app/src"
 
-CMD ["python", "src/spark_vs_polars/polars_main.py"]
+ENTRYPOINT ["python"]

@@ -1,7 +1,7 @@
 from dagster import define_asset_job
-from .assets import github_commits_polars
+from .assets import polars_plain_data
 
 polars_jobs = define_asset_job(
-    name="polars_jobs",
-    selection=[github_commits_polars],
+    name="polars_plain_data_jobs",
+    selection=[polars_plain_data],
 )
