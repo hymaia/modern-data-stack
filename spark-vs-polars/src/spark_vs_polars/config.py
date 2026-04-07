@@ -5,4 +5,10 @@ from dataclasses import dataclass, field
 @dataclass
 class Config:
     INPUT_FILE: str = field(default_factory=lambda: os.environ["INPUT_FILE"])
+    INPUT_BROADCAST_JOIN_FILE: str = field(
+        default_factory=lambda: os.environ["INPUT_BROADCAST_JOIN_FILE"]
+    )
+    INPUT_JOIN_FILE: str = field(
+        default_factory=lambda: os.environ["INPUT_JOIN_FILE"]
+    )
     OUTPUT_FILE: str = field(default_factory=lambda: os.environ["OUTPUT_FILE"])

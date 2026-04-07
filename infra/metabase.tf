@@ -15,8 +15,9 @@ resource "aws_rds_cluster" "metabase" {
   backup_retention_period = 1
 
   serverlessv2_scaling_configuration {
-    min_capacity = 0.5
+    min_capacity = 0.0
     max_capacity = 2
+    seconds_until_auto_pause = 360
   }
 
   tags = {

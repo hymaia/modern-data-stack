@@ -1,6 +1,7 @@
 import uuid
 import time
 from kubernetes import client, config
+from kubernetes.client import ApiException
 
 
 def submit_spark_application(
@@ -26,6 +27,10 @@ def submit_spark_application(
     default_spark_conf = {
         "spark.hadoop.fs.s3a.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem",
         "spark.hadoop.fs.s3a.aws.credentials.provider": "software.amazon.awssdk.auth.credentials.WebIdentityTokenFileCredentialsProvider",
+        "spark.hadoop.fs.s3a.committer.magic.enabled": "true",
+        "spark.hadoop.mapreduce.outputcommitter.factory.scheme.s3a": "org.apache.hadoop.fs.s3a.commit.S3ACommitterFactory",
+        "spark.sql.parquet.output.committer.class": "org.apache.spark.internal.io.cloud.BindingParquetOutputCommitter",
+        "spark.sql.sources.commitProtocolClass": "org.apache.spark.internal.io.cloud.PathOutputCommitProtocol",
     }
 
     k8s_env = [{"name": k, "value": v} for k, v in env.items()]
@@ -98,6 +103,7 @@ def wait_for_spark_application(
     crd_api = client.CustomObjectsApi()
 
     terminal_states = {"COMPLETED", "FAILED", "SUBMISSION_FAILED", "INVALIDATING"}
+    failed_states = {"FAILED", "SUBMISSION_FAILED", "INVALIDATING"}
     elapsed = 0
 
     while elapsed < timeout:
@@ -110,13 +116,45 @@ def wait_for_spark_application(
         )
         state = app.get("status", {}).get("applicationState", {}).get("state", "UNKNOWN")
         if state in terminal_states:
+            if state in failed_states:
+                logs = get_spark_application_logs(name, namespace)
+                raise RuntimeError(
+                    f"SparkApplication {name} failed with state: {state}\n\n"
+                    f"--- Driver logs ---\n{logs}"
+                )
             return state
-
         time.sleep(poll_interval)
         elapsed += poll_interval
 
     raise TimeoutError(f"SparkApplication {name} did not complete within {timeout}s")
 
+def get_spark_application_logs(name: str, namespace: str = "spark") -> str:
+    """
+    Récupère les logs du pod driver d'un SparkApplication.
+    """
+    config.load_incluster_config()
+    core_api = client.CoreV1Api()
+
+    # Le pod driver est labelisé avec spark-role=driver et le nom de l'app
+    pods = core_api.list_namespaced_pod(
+        namespace=namespace,
+        label_selector=f"spark-role=driver,spark-app-name={name}",
+    )
+
+    if not pods.items:
+        return f"No driver pod found for SparkApplication {name}"
+
+    driver_pod = pods.items[0]
+    pod_name = driver_pod.metadata.name
+
+    try:
+        logs = core_api.read_namespaced_pod_log(
+            name=pod_name,
+            namespace=namespace,
+        )
+        return logs
+    except ApiException as e:
+        return f"Failed to retrieve logs for pod {pod_name}: {e}"
 
 def delete_spark_application(name: str, namespace: str = "spark") -> None:
     config.load_incluster_config()

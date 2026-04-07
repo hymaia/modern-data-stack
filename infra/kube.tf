@@ -45,13 +45,6 @@ module "kubernetes" {
           "node-type" = "spot"
           "node-role"  = "spark-worker"
         }
-        # taints = {
-        #   spark-worker = {
-        #     key    = "spark-vs-polars-worker"
-        #     value  = "true"
-        #     effect = "NO_SCHEDULE"
-        #   }
-        # }
         update_config = {
           max_unavailable_percentage = 30
         }

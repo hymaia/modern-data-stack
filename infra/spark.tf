@@ -22,6 +22,8 @@ resource "aws_iam_policy" "data_jobs" {
           "s3:ListBucket",
           "s3:GetBucketLocation",
           "s3:ListMultipartUploadParts",
+          "s3:AbortMultipartUpload",
+          "s3:ListBucketMultipartUploads",
         ]
         Resource = [
           aws_s3_bucket.raw.arn,

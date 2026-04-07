@@ -69,8 +69,7 @@ df = (
 )
 
 # ── Écriture partitionnée par dt ──────────────────────────────────────────────
-df.repartition("dt") \
-    .write \
+df.write \
     .mode("overwrite") \
     .partitionBy("dt") \
     .json(OUTPUT_PATH)

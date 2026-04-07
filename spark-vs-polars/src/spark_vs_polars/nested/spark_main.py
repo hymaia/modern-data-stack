@@ -23,10 +23,10 @@ from pyspark.sql import functions as F
 # Session
 # ---------------------------------------------------------------------------
 
+
 def get_spark() -> SparkSession:
     return (
-        SparkSession.builder
-        .appName("transform_dynamo")
+        SparkSession.builder.appName("transform_dynamo")
         .master("local[*]")
         .config("spark.driver.memory", "24g")
         .getOrCreate()
@@ -37,20 +37,20 @@ def get_spark() -> SparkSession:
 # Lecture native Spark
 # ---------------------------------------------------------------------------
 
+
 def scan_all(spark: SparkSession, source: Path) -> DataFrame:
     """
     Spark lit récursivement tous les JSON sous source/,
     injecte automatiquement la colonne dt via le hive partitioning.
     Le schéma est inféré sur l'ensemble des fichiers en un seul scan.
     """
-    return (
-        spark.read.json(str(source))
-    )
+    return spark.read.json(str(source))
 
 
 # ---------------------------------------------------------------------------
 # Split par entity_type
 # ---------------------------------------------------------------------------
+
 
 def split(df: DataFrame, entity_type: str) -> DataFrame:
     return df.filter(F.col("entity_type") == entity_type)
@@ -60,73 +60,71 @@ def split(df: DataFrame, entity_type: str) -> DataFrame:
 # Enrichissements
 # ---------------------------------------------------------------------------
 
+
 def enrich_orders(df: DataFrame) -> DataFrame:
-    placed    = F.to_timestamp("placed_at",    "yyyy-MM-dd'T'HH:mm:ss'Z'")
+    placed = F.to_timestamp("placed_at", "yyyy-MM-dd'T'HH:mm:ss'Z'")
     delivered = F.to_timestamp("delivered_at", "yyyy-MM-dd'T'HH:mm:ss'Z'")
     return (
-        df
-        .withColumn("price_bucket",
-                    F.when(F.col("total_amount") < 50,  F.lit("low"))
-                    .when(F.col("total_amount") < 200, F.lit("mid"))
-                    .when(F.col("total_amount") < 500, F.lit("high"))
-                    .otherwise(F.lit("premium"))
-                    )
-        .withColumn("is_weekend",
-                    F.dayofweek(placed).isin([1, 7])
-                    )
+        df.withColumn(
+            "price_bucket",
+            F.when(F.col("total_amount") < 50, F.lit("low"))
+            .when(F.col("total_amount") < 200, F.lit("mid"))
+            .when(F.col("total_amount") < 500, F.lit("high"))
+            .otherwise(F.lit("premium")),
+        )
+        .withColumn("is_weekend", F.dayofweek(placed).isin([1, 7]))
         .withColumn("hour_of_day", F.hour(placed))
-        .withColumn("days_to_deliver",
-                    F.when(delivered.isNotNull(), F.datediff(delivered, placed))
-                    .otherwise(F.lit(None).cast("int"))
-                    )
+        .withColumn(
+            "days_to_deliver",
+            F.when(delivered.isNotNull(), F.datediff(delivered, placed)).otherwise(
+                F.lit(None).cast("int")
+            ),
+        )
     )
 
 
 def enrich_reviews(df: DataFrame) -> DataFrame:
     total_votes = F.col("helpful_votes") + F.col("unhelpful_votes")
-    return (
-        df
-        .withColumn("sentiment_bucket",
-                    F.when(F.col("rating") >= 4, F.lit("positive"))
-                    .when(F.col("rating") == 3, F.lit("neutral"))
-                    .otherwise(F.lit("negative"))
-                    )
-        .withColumn("helpfulness_rate",
-                    F.when(
-                        total_votes > 0,
-                        F.col("helpful_votes").cast("double") / total_votes.cast("double")
-                    ).otherwise(F.lit(None).cast("double"))
-                    )
+    return df.withColumn(
+        "sentiment_bucket",
+        F.when(F.col("rating") >= 4, F.lit("positive"))
+        .when(F.col("rating") == 3, F.lit("neutral"))
+        .otherwise(F.lit("negative")),
+    ).withColumn(
+        "helpfulness_rate",
+        F.when(
+            total_votes > 0,
+            F.col("helpful_votes").cast("double") / total_votes.cast("double"),
+        ).otherwise(F.lit(None).cast("double")),
     )
 
 
 def enrich_users(df: DataFrame) -> DataFrame:
-    return df.withColumn(
-        "is_premium",
-        F.col("plan").isin(["premium", "enterprise"])
-    )
+    return df.withColumn("is_premium", F.col("plan").isin(["premium", "enterprise"]))
 
 
 def enrich_products(df: DataFrame) -> DataFrame:
     return (
-        df
-        .withColumn("volume_cm3",
-                    F.col("dimensions_cm.l")
-                    * F.col("dimensions_cm.w")
-                    * F.col("dimensions_cm.h")
-                    )
+        df.withColumn(
+            "volume_cm3",
+            F.col("dimensions_cm.l")
+            * F.col("dimensions_cm.w")
+            * F.col("dimensions_cm.h"),
+        )
         .withColumn("is_out_of_stock", F.col("stock") == 0)
-        .withColumn("price_tier",
-                    F.when(F.col("price") < 30,  F.lit("budget"))
-                    .when(F.col("price") < 150, F.lit("mid"))
-                    .otherwise(F.lit("premium"))
-                    )
+        .withColumn(
+            "price_tier",
+            F.when(F.col("price") < 30, F.lit("budget"))
+            .when(F.col("price") < 150, F.lit("mid"))
+            .otherwise(F.lit("premium")),
+        )
     )
 
 
 # ---------------------------------------------------------------------------
 # Jointures
 # ---------------------------------------------------------------------------
+
 
 def join_orders_users(orders: DataFrame, users: DataFrame) -> DataFrame:
     users_slim = users.select(
@@ -155,29 +153,22 @@ def join_reviews_products(reviews: DataFrame, products: DataFrame) -> DataFrame:
 
 
 def join_orders_reviews(orders: DataFrame, reviews: DataFrame) -> DataFrame:
-    order_items = (
-        orders
-        .select("order_id", F.explode("items").alias("item"))
-        .select("order_id", F.col("item.product_id").alias("product_id"))
+    order_items = orders.select("order_id", F.explode("items").alias("item")).select(
+        "order_id", F.col("item.product_id").alias("product_id")
     )
 
-    review_agg = (
-        reviews
-        .groupBy("product_id")
-        .agg(
-            F.count("*").alias("nb_reviews"),
-            F.round(F.mean("rating"), 2).alias("avg_rating"),
-            F.round(
-                F.sum((F.col("sentiment_bucket") == "positive").cast("double"))
-                / F.count("*").cast("double"),
-                3
-            ).alias("pct_positive"),
-        )
+    review_agg = reviews.groupBy("product_id").agg(
+        F.count("*").alias("nb_reviews"),
+        F.round(F.mean("rating"), 2).alias("avg_rating"),
+        F.round(
+            F.sum((F.col("sentiment_bucket") == "positive").cast("double"))
+            / F.count("*").cast("double"),
+            3,
+        ).alias("pct_positive"),
     )
 
     order_review_agg = (
-        order_items
-        .join(review_agg, on="product_id", how="left")
+        order_items.join(review_agg, on="product_id", how="left")
         .groupBy("order_id")
         .agg(
             F.sum("nb_reviews").alias("total_reviews_on_items"),
@@ -193,10 +184,10 @@ def join_orders_reviews(orders: DataFrame, reviews: DataFrame) -> DataFrame:
 # Agrégations
 # ---------------------------------------------------------------------------
 
+
 def agg_revenue(orders: DataFrame) -> DataFrame:
     return (
-        orders
-        .withColumn("shipping_country", F.col("shipping_address.country"))
+        orders.withColumn("shipping_country", F.col("shipping_address.country"))
         .groupBy("dt", "shipping_country", "currency")
         .agg(
             F.round(F.sum("total_amount"), 2).alias("revenue"),
@@ -210,8 +201,7 @@ def agg_revenue(orders: DataFrame) -> DataFrame:
 
 def agg_order_status(orders: DataFrame) -> DataFrame:
     return (
-        orders
-        .groupBy("dt", "status")
+        orders.groupBy("dt", "status")
         .agg(
             F.count("*").alias("nb_orders"),
             F.round(F.sum("total_amount"), 2).alias("total_amount"),
@@ -223,8 +213,7 @@ def agg_order_status(orders: DataFrame) -> DataFrame:
 
 def agg_product_rating(reviews: DataFrame) -> DataFrame:
     return (
-        reviews
-        .groupBy("dt", "product_id")
+        reviews.groupBy("dt", "product_id")
         .agg(
             F.round(F.mean("rating"), 2).alias("avg_rating"),
             F.round(F.stddev("rating"), 3).alias("std_rating"),
@@ -233,7 +222,7 @@ def agg_product_rating(reviews: DataFrame) -> DataFrame:
             F.round(
                 F.sum(F.col("verified_purchase").cast("double"))
                 / F.count("*").cast("double"),
-                3
+                3,
             ).alias("pct_verified"),
             F.sum((F.col("rating") == 5).cast("int")).alias("nb_5stars"),
             F.sum((F.col("rating") == 1).cast("int")).alias("nb_1star"),
@@ -244,8 +233,7 @@ def agg_product_rating(reviews: DataFrame) -> DataFrame:
 
 def agg_user_basket(orders: DataFrame) -> DataFrame:
     return (
-        orders
-        .filter(F.col("status").isin(["delivered", "shipped", "processing"]))
+        orders.filter(F.col("status").isin(["delivered", "shipped", "processing"]))
         .groupBy("dt", "user_id")
         .agg(
             F.round(F.mean("total_amount"), 2).alias("avg_basket"),
@@ -255,11 +243,12 @@ def agg_user_basket(orders: DataFrame) -> DataFrame:
             F.round(F.mean("item_count"), 1).alias("avg_items_per_order"),
             F.sum(F.col("is_weekend").cast("int")).alias("nb_weekend_orders"),
         )
-        .withColumn("customer_segment",
-                    F.when(F.col("total_spent") >= 1000, F.lit("vip"))
-                    .when(F.col("total_spent") >= 200,  F.lit("regular"))
-                    .otherwise(F.lit("occasional"))
-                    )
+        .withColumn(
+            "customer_segment",
+            F.when(F.col("total_spent") >= 1000, F.lit("vip"))
+            .when(F.col("total_spent") >= 200, F.lit("regular"))
+            .otherwise(F.lit("occasional")),
+        )
     )
 
 
@@ -267,13 +256,9 @@ def agg_user_basket(orders: DataFrame) -> DataFrame:
 # Écriture Parquet partitionnée par dt
 # ---------------------------------------------------------------------------
 
+
 def write(df: DataFrame, base: Path, name: str) -> None:
-    (
-        df.write
-        .mode("overwrite")
-        .partitionBy("dt")
-        .parquet(str(base / name))
-    )
+    (df.write.mode("overwrite").partitionBy("dt").parquet(str(base / name)))
     print(f"  ✓ {name}")
 
 
@@ -281,15 +266,16 @@ def write(df: DataFrame, base: Path, name: str) -> None:
 # CLI + pipeline principal
 # ---------------------------------------------------------------------------
 
+
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="DynamoDB NDJSON → Parquet (Spark)")
-    p.add_argument("--input",  default="output",        help="Dossier source")
+    p.add_argument("--input", default="output", help="Dossier source")
     p.add_argument("--output", default="parquet_spark", help="Dossier destination")
     return p.parse_args()
 
 
 def main() -> None:
-    args   = parse_args()
+    args = parse_args()
     source = Path(args.input)
     output = Path(args.output)
 
@@ -299,23 +285,23 @@ def main() -> None:
     print(f"\nScan : {source}/dt=*/data.ndjson")
     df = scan_all(spark, source)
 
-    users    = enrich_users(split(df, "USER"))
+    users = enrich_users(split(df, "USER"))
     products = enrich_products(split(df, "PRODUCT"))
-    orders   = enrich_orders(split(df, "ORDER"))
-    reviews  = enrich_reviews(split(df, "REVIEW"))
+    orders = enrich_orders(split(df, "ORDER"))
+    reviews = enrich_reviews(split(df, "REVIEW"))
 
     orders.cache()
     reviews.cache()
 
     print(f"\nÉcriture dans {output}/\n")
 
-    write(join_orders_users(orders, users),         output, "orders_enriched")
+    write(join_orders_users(orders, users), output, "orders_enriched")
     write(join_reviews_products(reviews, products), output, "reviews_enriched")
-    write(join_orders_reviews(orders, reviews),     output, "orders_reviews")
-    write(agg_revenue(orders),                      output, "agg_revenue")
-    write(agg_order_status(orders),                 output, "agg_order_status")
-    write(agg_product_rating(reviews),              output, "agg_product_rating")
-    write(agg_user_basket(orders),                  output, "agg_user_basket")
+    write(join_orders_reviews(orders, reviews), output, "orders_reviews")
+    write(agg_revenue(orders), output, "agg_revenue")
+    write(agg_order_status(orders), output, "agg_order_status")
+    write(agg_product_rating(reviews), output, "agg_product_rating")
+    write(agg_user_basket(orders), output, "agg_user_basket")
 
     print("\nDone.")
 
