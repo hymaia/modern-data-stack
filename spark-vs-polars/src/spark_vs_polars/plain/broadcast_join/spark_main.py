@@ -12,7 +12,15 @@ from spark_vs_polars.config import Config
 
 
 def main():
-    spark = SparkSession.builder.appName("plain_spark").getOrCreate()
+    spark = (
+        SparkSession.builder
+        .appName("plain_spark")
+        .config("spark.sql.parquet.compression.codec", "zstd")
+        .config("spark.io.compression.zstd.level", "3")
+        .config("spark.sql.adaptive.enabled", "true")
+        .config("spark.sql.adaptive.coalescePartitions.enabled", "true")
+        .getOrCreate()
+    )
     config = Config()
 
     schema = StructType(

@@ -2,12 +2,12 @@ from dagster import asset, OpExecutionContext
 from dagster_k8s import PipesK8sClient
 
 POLARS_IMAGE = "662195598891.dkr.ecr.eu-west-1.amazonaws.com/hymaia/spark-vs-polars:polars"
-INPUT_FILE = "s3://hymaia-datalake-raw/spark-vs-polars/plain_data/10_000_000-rows"
+INPUT_FILE = "s3://hymaia-datalake-raw/spark-vs-polars/plain_data/1_000_000_000-rows"
 INPUT_BROADCAST_JOIN_FILE = "s3://hymaia-datalake-raw/spark-vs-polars/cancellation_reason.json"
 INPUT_JOIN_FILE = "s3://hymaia-datalake-raw/spark-vs-polars/join-example-dataset"
-OUTPUT_GROUPBY_FILE = "s3://hymaia-datalake-staging/polars/plain_data/groupby/10_000_000-rows"
-OUTPUT_BROADCAST_JOIN_FILE = "s3://hymaia-datalake-staging/polars/plain_data/broadcast_join/10_000_000-rows"
-OUTPUT_JOIN_FILE = "s3://hymaia-datalake-staging/polars/plain_data/join/10_000_000-rows"
+OUTPUT_GROUPBY_FILE = "s3://hymaia-datalake-staging/polars/plain_data/groupby/1_000_000_000-rows"
+OUTPUT_BROADCAST_JOIN_FILE = "s3://hymaia-datalake-staging/polars/plain_data/broadcast_join/1_000_000_000-rows"
+OUTPUT_JOIN_FILE = "s3://hymaia-datalake-staging/polars/plain_data/join/1_000_000_000-rows"
 
 
 @asset
@@ -42,8 +42,8 @@ def polars_groupby_plain_data(context: OpExecutionContext, pipes_k8s_client: Pip
                         {"name": "OUTPUT_FILE", "value": OUTPUT_GROUPBY_FILE},
                     ],
                     "resources": {
-                        "requests": {"cpu": "4000m", "memory": "8Gi"},
-                        "limits": {"cpu": "4000m", "memory": "8Gi"},
+                        "requests": {"cpu": "12000m", "memory": "24Gi"},
+                        "limits": {"cpu": "12000m", "memory": "24Gi"},
                     },
                 }
             ],
@@ -82,8 +82,8 @@ def polars_broadcastjoin_plain_data(context: OpExecutionContext, pipes_k8s_clien
                         {"name": "OUTPUT_FILE", "value": OUTPUT_BROADCAST_JOIN_FILE},
                     ],
                     "resources": {
-                        "requests": {"cpu": "4000m", "memory": "8Gi"},
-                        "limits": {"cpu": "4000m", "memory": "8Gi"},
+                        "requests": {"cpu": "12000m", "memory": "24Gi"},
+                        "limits": {"cpu": "12000m", "memory": "24Gi"},
                     },
                 }
             ],
@@ -122,8 +122,8 @@ def polars_join_plain_data(context: OpExecutionContext, pipes_k8s_client: PipesK
                         {"name": "OUTPUT_FILE", "value": OUTPUT_JOIN_FILE},
                     ],
                     "resources": {
-                        "requests": {"cpu": "4000m", "memory": "8Gi"},
-                        "limits": {"cpu": "4000m", "memory": "8Gi"},
+                        "requests": {"cpu": "12000m", "memory": "24Gi"},
+                        "limits": {"cpu": "12000m", "memory": "24Gi"},
                     },
                 }
             ],

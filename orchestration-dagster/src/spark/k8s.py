@@ -151,6 +151,7 @@ def get_spark_application_logs(name: str, namespace: str = "spark") -> str:
         logs = core_api.read_namespaced_pod_log(
             name=pod_name,
             namespace=namespace,
+            tail_lines=100,
         )
         return logs
     except ApiException as e:

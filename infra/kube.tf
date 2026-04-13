@@ -16,6 +16,16 @@ module "kubernetes" {
   cluster_autoscaler_subnet_selector = "1"
   cluster_autoscaler_create = false
 
+  cluster_network_internal_vpc_endpoints = {
+    enabled = true
+    services = {
+      s3 = {
+        service      = "s3"
+        service_type = "Gateway"
+      }
+    }
+  }
+
   cluster_compute_pool_aws_managed = {
     defaults = {}
     groups = {
@@ -36,9 +46,9 @@ module "kubernetes" {
       }
       spark = {
         capacity_type = "SPOT"
-        desired_size  = 5
+        desired_size  = 7
         min_size      = 0
-        max_size      = 6
+        max_size      = 10
         disk_size     = 100
         instance_types = ["m5a.4xlarge", "m6a.4xlarge", "m6i.4xlarge"]
         labels = {

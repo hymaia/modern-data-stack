@@ -12,7 +12,15 @@ from spark_vs_polars.config import Config
 
 
 def main():
-    spark = SparkSession.builder.appName("plain_spark").getOrCreate()
+    spark = (
+        SparkSession.builder
+        .appName("plain_spark")
+        .config("spark.sql.parquet.compression.codec", "zstd")
+        .config("spark.io.compression.zstd.level", "3")
+        .config("spark.sql.adaptive.enabled", "true")
+        .config("spark.sql.adaptive.coalescePartitions.enabled", "true")
+        .getOrCreate()
+    )
     config = Config()
 
     schema = StructType(
@@ -31,7 +39,7 @@ def main():
 
     join_df = spark.read.json(config.INPUT_JOIN_FILE) \
         .withColumn("placed_at", f.to_timestamp(f.col("placed_at"), "yyyy-MM-dd'T'HH:mm:ss'Z'"))
-    df = spark.read.schema(schema).json(config.INPUT_FILE)
+    df = spark.read.schema(schema).json(config.INPUT_FILE).drop("dt")
     res = (
         df.withColumn("delivered_at", f.to_timestamp(f.col("delivered_at")))
         .withColumn("placed_at", f.to_timestamp(f.col("placed_at")))
