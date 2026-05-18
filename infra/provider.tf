@@ -13,7 +13,7 @@ terraform {
 
   backend "s3" {
     bucket         = "hyma-kube-terraform-state-management-dev"
-    key            = "terraform.tfstate"
+    key            = "data-platform/terraform.tfstate"
     region         = "eu-west-1"
     encrypt        = true
   }
@@ -25,6 +25,7 @@ provider "aws" {
   default_tags {
     tags = {
       Environment = "dev"
+      project     = "data-platform"
       ManagedBy   = "terraform"
     }
   }
