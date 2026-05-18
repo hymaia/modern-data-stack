@@ -53,7 +53,7 @@ resource "random_password" "airbyte_db" {
 }
 
 resource "aws_secretsmanager_secret" "airbyte_db" {
-  name = "airbyte/postgresql"
+  name = "airbyte/postgresql-auth"
 }
 
 resource "aws_secretsmanager_secret_version" "airbyte_db" {

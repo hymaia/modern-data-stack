@@ -3,20 +3,20 @@ resource "helm_release" "argocd" {
   namespace        = "argocd"
   repository       = "https://argoproj.github.io/argo-helm"
   chart            = "argo-cd"
-  version          = "9.4.5"
+  version          = "9.4.12"
   create_namespace = true
   wait             = true
   atomic           = true
 
-  set {
-    name  = "global.image.repository"
-    value = "argoproj/argocd"
-  }
-
-  set {
-    name  = "global.image.tag"
-    value = "v3.0.5"
-  }
+  # set {
+  #   name  = "global.image.repository"
+  #   value = "argoproj/argocd"
+  # }
+  #
+  # set {
+  #   name  = "global.image.tag"
+  #   value = "v2.6.15"
+  # }
 
   set {
     name  = "server.ingress.enabled"

@@ -53,7 +53,7 @@ resource "random_password" "dagster_db" {
 }
 
 resource "aws_secretsmanager_secret" "dagster_db" {
-  name = "dagster/postgresql"
+  name = "dagster/postgresql-auth"
 }
 
 resource "aws_secretsmanager_secret_version" "dagster_db" {

@@ -53,7 +53,7 @@ resource "random_password" "metabase_db" {
 }
 
 resource "aws_secretsmanager_secret" "metabase_db" {
-  name = "metabase/postgresql"
+  name = "metabase/postgresql-auth"
 }
 
 resource "aws_secretsmanager_secret_version" "metabase_db" {

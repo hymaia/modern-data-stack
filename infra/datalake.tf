@@ -5,6 +5,8 @@ resource "aws_s3_bucket" "raw" {
     Name        = "Raw Data Bucket"
     Layer       = "raw"
   }
+
+  force_destroy = true
 }
 
 resource "aws_s3_bucket" "staging" {
@@ -14,6 +16,8 @@ resource "aws_s3_bucket" "staging" {
     Name        = "Staging Data Bucket"
     Layer       = "staging"
   }
+
+  force_destroy = true
 }
 
 resource "aws_s3_bucket" "mart" {
@@ -23,6 +27,8 @@ resource "aws_s3_bucket" "mart" {
     Name        = "Mart Data Bucket"
     Layer       = "mart"
   }
+
+  force_destroy = true
 }
 
 # Versioning pour les buckets

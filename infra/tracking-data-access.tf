@@ -4,4 +4,5 @@ module "tracking_data_access" {
   bucket_tracking_data_name                  = "audit-data-access"
   database_tracking_data_name                = "audit"
   table_tracking_data_name                   = "read_actions"
+  force_destroy                              = true
 }

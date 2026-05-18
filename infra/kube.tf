@@ -1,6 +1,6 @@
 module "kubernetes" {
   source  = "jetbrains/kubernetes/aws"
-  version = "v3.6.0"
+  version = "v3.8.0"
 
   prefix = local.prefix
 
@@ -15,6 +15,47 @@ module "kubernetes" {
 
   cluster_autoscaler_subnet_selector = "1"
   cluster_autoscaler_create = false
+
+  cluster_monitoring = {
+    helm_chart_repository = "https://prometheus-community.github.io/helm-charts"
+    helm_chart_name       = "kube-prometheus-stack"
+    helm_chart_version    = "56.21.1"
+    helm_chart_namespace  = "kube-monitoring"
+  }
+
+  cluster_logging = {
+    helm_chart_repository = "https://grafana.github.io/helm-charts"
+    helm_chart_name       = "loki"
+    helm_chart_version    = "5.43.3"
+    helm_chart_namespace  = "kube-monitoring"
+  }
+
+  cluster_logging_collector = {
+    helm_chart_repository = "https://grafana.github.io/helm-charts"
+    helm_chart_name       = "promtail"
+    helm_chart_version    = "6.15.5"
+    helm_chart_namespace  = "kube-monitoring"
+  }
+
+  cluster_metrics_server = {
+    helm_chart_repository = "https://kubernetes-sigs.github.io/metrics-server/"
+    helm_chart_name       = "metrics-server"
+    helm_chart_version    = "3.12.0"
+    helm_chart_namespace  = "kube-monitoring"
+  }
+
+  cluster_descheduler = {
+    helm_chart_repository = "https://kubernetes-sigs.github.io/descheduler/"
+    helm_chart_name       = "descheduler"
+    helm_chart_version    = "0.29.0"
+  }
+
+  cluster_node_patcher = {
+    helm_chart_repository = "https://kubereboot.github.io/charts"
+    helm_chart_name       = "kured"
+    helm_chart_version    = "5.11.0"
+    helm_chart_namespace  = "kube-node-rebooter"
+  }
 
   cluster_network_internal_vpc_endpoints = {
     enabled = true
@@ -31,7 +72,7 @@ module "kubernetes" {
     groups = {
       main = {
         capacity_type = "SPOT"
-        desired_size  = 3
+        desired_size  = 5
         min_size      = 0
         max_size      = 5
         disk_size     = 100
@@ -46,7 +87,7 @@ module "kubernetes" {
       }
       spark = {
         capacity_type = "SPOT"
-        desired_size  = 7
+        desired_size  = 0
         min_size      = 0
         max_size      = 10
         disk_size     = 100
