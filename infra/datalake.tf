@@ -179,7 +179,6 @@ resource "aws_glue_catalog_database" "mart" {
   location_uri = "s3://${aws_s3_bucket.mart.bucket}/"
 }
 
-# Athena Workgroup
 resource "aws_athena_workgroup" "main" {
   name        = "hymaia-datalake-workgroup"
   description = "Workgroup principal pour les requêtes Athena"
@@ -203,6 +202,32 @@ resource "aws_athena_workgroup" "main" {
 
   tags = {
     Name        = "Main Athena Workgroup"
+  }
+}
+
+resource "aws_athena_workgroup" "agent" {
+  name        = "hymaia-datalake-agent-workgroup"
+  description = "Workgroup agentic pour les requêtes Athena"
+
+  configuration {
+    enforce_workgroup_configuration    = false
+    publish_cloudwatch_metrics_enabled = true
+
+    result_configuration {
+      output_location = "s3://${aws_s3_bucket.athena_results.bucket}/output"
+
+      encryption_configuration {
+        encryption_option = "SSE_S3"
+      }
+    }
+
+    engine_version {
+      selected_engine_version = "Athena engine version 3"
+    }
+  }
+
+  tags = {
+    Name        = "Agentic Athena Workgroup"
   }
 }
 

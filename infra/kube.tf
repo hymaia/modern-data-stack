@@ -195,6 +195,11 @@ locals {
       sa_name   = "spark-jobs"
     },
     {
+      name      = "nl-query-agent"
+      namespace = "agent"
+      sa_name   = "nl-query-agent"
+    },
+    {
       name      = "polars-jobs"
       namespace = "polars"
       sa_name   = "polars-jobs"
