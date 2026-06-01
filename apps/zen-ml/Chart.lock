@@ -1,0 +1,6 @@
+dependencies:
+- name: zenml
+  repository: oci://public.ecr.aws/zenml
+  version: 0.94.5
+digest: sha256:ad9eb752bf49dde2af6c3478121472e110ecc34c1ddd04e440022d0687ab2f42
+generated: "2026-06-01T20:28:29.843071207+02:00"

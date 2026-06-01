@@ -34,3 +34,13 @@ resource "local_file" "spark_operator_values" {
     role_iam_arn = aws_iam_role.spark_jobs.arn
   })
 }
+
+resource "local_file" "zenml_values" {
+  filename = "${path.module}/../apps/zen-ml/values.yaml"
+  content  = templatefile("${path.module}/templates/zen-ml-values.yaml.tpl", {
+    certificate_arn = data.aws_acm_certificate.fcussac_app.arn
+    rds_endpoint    = aws_rds_cluster_instance.zenml.endpoint
+    rds_username    = aws_rds_cluster.zenml.master_username
+    role_iam_arn    = aws_iam_role.zenml.arn
+  })
+}

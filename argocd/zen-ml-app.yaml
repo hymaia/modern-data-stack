@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: zen-ml
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/hymaia/modern-data-stack
+    targetRevision: main
+    path: apps/zen-ml
+    helm:
+      valueFiles:
+        - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: zen-ml
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

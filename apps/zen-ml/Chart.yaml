@@ -1,0 +1,7 @@
+apiVersion: v2
+name: zen-ml-wrapper
+version: 0.1.0
+dependencies:
+  - name: zenml
+    version: "0.94.5"
+    repository: "oci://public.ecr.aws/zenml"

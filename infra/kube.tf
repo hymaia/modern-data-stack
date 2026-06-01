@@ -204,6 +204,11 @@ locals {
       namespace = "polars"
       sa_name   = "polars-jobs"
     },
+    {
+      name      = "zenml"
+      namespace = "zenml"
+      sa_name   = "zenml"
+    },
   ] : sa.name => jsonencode({
     Version = "2012-10-17"
     Statement = [{
