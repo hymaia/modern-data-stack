@@ -2,7 +2,7 @@ resource "aws_rds_cluster" "metabase" {
   cluster_identifier  = "metabase"
   engine              = "aurora-postgresql"
   engine_mode         = "provisioned"
-  engine_version      = "16.4"
+  engine_version      = "16.11"
   database_name       = "metabase"
   master_username     = "metabase"
   master_password     = random_password.metabase_db.result

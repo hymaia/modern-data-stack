@@ -47,8 +47,14 @@ data "aws_iam_policy_document" "athena" {
       "athena:GetQueryResults",
       "athena:StopQueryExecution",
       "athena:ListQueryExecutions",
+      "athena:ListTableMetadata",
+      "athena:GetTableMetadata",
+      "athena:ListDatabases",
     ]
-    resources = [aws_athena_workgroup.agent.arn]
+    resources = [
+      aws_athena_workgroup.agent.arn,
+      "arn:aws:athena:eu-west-1:${data.aws_caller_identity.current.account_id}:datacatalog/*",
+    ]
   }
 }
 

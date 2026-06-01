@@ -2,7 +2,7 @@ resource "aws_rds_cluster" "dagster" {
   cluster_identifier  = "dagster"
   engine              = "aurora-postgresql"
   engine_mode         = "provisioned"
-  engine_version      = "16.4"
+  engine_version      = "16.11"
   database_name       = "dagster"
   master_username     = "dagster"
   master_password     = random_password.dagster_db.result

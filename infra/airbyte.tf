@@ -2,7 +2,7 @@ resource "aws_rds_cluster" "airbyte" {
   cluster_identifier  = "airbyte"
   engine              = "aurora-postgresql"
   engine_mode         = "provisioned"
-  engine_version      = "16.4"
+  engine_version      = "16.11"
   database_name       = "airbyte"
   master_username     = "airbyte"
   master_password     = random_password.airbyte_db.result

@@ -72,7 +72,7 @@ module "kubernetes" {
     groups = {
       main = {
         capacity_type = "SPOT"
-        desired_size  = 5
+        desired_size  = 0
         min_size      = 0
         max_size      = 5
         disk_size     = 100
