@@ -209,6 +209,11 @@ locals {
       namespace = "zenml"
       sa_name   = "zenml"
     },
+    {
+      name      = "mlflow"
+      namespace = "mlflow"
+      sa_name   = "mlflow"
+    },
   ] : sa.name => jsonencode({
     Version = "2012-10-17"
     Statement = [{

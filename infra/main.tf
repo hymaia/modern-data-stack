@@ -44,3 +44,13 @@ resource "local_file" "zenml_values" {
     role_iam_arn    = aws_iam_role.zenml.arn
   })
 }
+
+resource "local_file" "mlflow_values" {
+  filename = "${path.module}/../apps/mlflow/values.yaml"
+  content = templatefile("${path.module}/templates/mlflow-values.yaml.tpl", {
+    certificate_arn = data.aws_acm_certificate.fcussac_app.arn
+    rds_endpoint    = aws_rds_cluster_instance.mlflow.endpoint
+    role_iam_arn    = aws_iam_role.mlflow.arn
+    artifact_bucket = aws_s3_bucket.mlflow_artifacts.bucket
+  })
+}
