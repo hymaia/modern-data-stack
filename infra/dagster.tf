@@ -1,22 +1,22 @@
 resource "aws_rds_cluster" "dagster" {
-  cluster_identifier  = "dagster"
-  engine              = "aurora-postgresql"
-  engine_mode         = "provisioned"
-  engine_version      = "16.11"
-  database_name       = "dagster"
-  master_username     = "dagster"
-  master_password     = random_password.dagster_db.result
+  cluster_identifier = "dagster"
+  engine             = "aurora-postgresql"
+  engine_mode        = "provisioned"
+  engine_version     = "16.11"
+  database_name      = "dagster"
+  master_username    = "dagster"
+  master_password    = random_password.dagster_db.result
 
   db_subnet_group_name   = local.subnet_group_name
   vpc_security_group_ids = [aws_security_group.dagster_db.id]
 
-  skip_final_snapshot = true
-  deletion_protection = false
+  skip_final_snapshot     = true
+  deletion_protection     = false
   backup_retention_period = 1
 
   serverlessv2_scaling_configuration {
-    min_capacity = 0.0
-    max_capacity = 2.0
+    min_capacity             = 0.0
+    max_capacity             = 2.0
     seconds_until_auto_pause = 360
   }
 
@@ -192,13 +192,13 @@ resource "aws_iam_role_policy" "dagster_athena" {
 }
 
 resource "aws_ecr_repository" "dagster_user_code" {
-  name = "hymaia/orchestration-dagster"
+  name                 = "hymaia/orchestration-dagster"
   image_tag_mutability = "MUTABLE"
-  force_delete = true
+  force_delete         = true
 }
 
 resource "aws_ecr_repository" "dagster_user_code_github_dbt" {
-  name = "hymaia/github-dbt-project"
+  name                 = "hymaia/github-dbt-project"
   image_tag_mutability = "MUTABLE"
-  force_delete = true
+  force_delete         = true
 }

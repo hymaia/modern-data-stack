@@ -34,6 +34,11 @@ resource "helm_release" "argocd" {
   }
 
   set {
+    name  = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/group\\.name"
+    value = "shared-alb"
+  }
+
+  set {
     name  = "server.ingress.annotations.alb\\.ingress\\.kubernetes\\.io/certificate-arn"
     value = data.aws_acm_certificate.fcussac_app.arn
   }

@@ -35,3 +35,7 @@ zenml:
     name: "zenml-sa"
     annotations:
       eks.amazonaws.com/role-arn: "${role_iam_arn}"
+
+global:
+  serviceAccountPipelineName: "zenml-pipeline"
+  roleIamPipeline: "${role_iam_pipeline_arn}"

@@ -1,11 +1,11 @@
 resource "aws_rds_cluster" "mlflow" {
-  cluster_identifier  = "mlflow"
-  engine              = "aurora-postgresql"
-  engine_mode         = "provisioned"
-  engine_version      = "16.11"
-  database_name       = "mlflow"
-  master_username     = "mlflow"
-  master_password     = random_password.mlflow_db.result
+  cluster_identifier = "mlflow"
+  engine             = "aurora-postgresql"
+  engine_mode        = "provisioned"
+  engine_version     = "16.11"
+  database_name      = "mlflow"
+  master_username    = "mlflow"
+  master_password    = random_password.mlflow_db.result
 
   db_subnet_group_name   = local.subnet_group_name
   vpc_security_group_ids = [aws_security_group.mlflow_db.id]

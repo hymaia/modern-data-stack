@@ -14,7 +14,7 @@ module "kubernetes" {
   cluster_network_type = "internal"
 
   cluster_autoscaler_subnet_selector = "1"
-  cluster_autoscaler_create = false
+  cluster_autoscaler_create          = false
 
   cluster_monitoring = {
     helm_chart_repository = "https://prometheus-community.github.io/helm-charts"
@@ -71,11 +71,11 @@ module "kubernetes" {
     defaults = {}
     groups = {
       main = {
-        capacity_type = "SPOT"
-        desired_size  = 0
-        min_size      = 0
-        max_size      = 5
-        disk_size     = 100
+        capacity_type  = "SPOT"
+        desired_size   = 0
+        min_size       = 0
+        max_size       = 5
+        disk_size      = 100
         instance_types = ["t3a.xlarge", "t3.xlarge", "m5a.xlarge", "m6a.xlarge", "m6i.xlarge"]
         labels = {
           "node-type" = "spot"
@@ -86,15 +86,15 @@ module "kubernetes" {
         use_custom_launch_template = false
       }
       spark = {
-        capacity_type = "SPOT"
-        desired_size  = 0
-        min_size      = 0
-        max_size      = 10
-        disk_size     = 100
+        capacity_type  = "SPOT"
+        desired_size   = 0
+        min_size       = 0
+        max_size       = 10
+        disk_size      = 100
         instance_types = ["m5a.4xlarge", "m6a.4xlarge", "m6i.4xlarge"]
         labels = {
           "node-type" = "spot"
-          "node-role"  = "spark-worker"
+          "node-role" = "spark-worker"
         }
         update_config = {
           max_unavailable_percentage = 30
@@ -146,18 +146,18 @@ resource "helm_release" "secrets_store_csi_driver" {
   atomic     = true
 
   set {
-    name = "syncSecret.enabled"
+    name  = "syncSecret.enabled"
     value = "true"
   }
   set {
-    name = "enableSecretRotation"
+    name  = "enableSecretRotation"
     value = "true"
   }
 }
 
 
 locals {
-  oidc_issuer        = trimprefix(module.kubernetes.cluster[0].cluster_oidc_issuer_url, "https://")
+  oidc_issuer = trimprefix(module.kubernetes.cluster[0].cluster_oidc_issuer_url, "https://")
   irsa_assume_policy = { for sa in [
     {
       name      = "aws-lb-controller"
@@ -206,27 +206,32 @@ locals {
     },
     {
       name      = "zenml"
-      namespace = "zenml"
-      sa_name   = "zenml"
+      namespace = "zen-ml"
+      sa_name   = "zenml-sa"
     },
     {
       name      = "mlflow"
       namespace = "mlflow"
       sa_name   = "mlflow"
     },
-  ] : sa.name => jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Effect    = "Allow"
-      Principal = { Federated = "arn:aws:iam::${local.account_id}:oidc-provider/${local.oidc_issuer}" }
-      Action    = "sts:AssumeRoleWithWebIdentity"
-      Condition = {
-        StringEquals = {
-          "${local.oidc_issuer}:sub" = "system:serviceaccount:${sa.namespace}:${sa.sa_name}"
-          "${local.oidc_issuer}:aud" = "sts.amazonaws.com"
+    {
+      name      = "zenml-pipeline-role"
+      namespace = "zen-ml"
+      sa_name   = "zenml-pipeline"
+    },
+    ] : sa.name => jsonencode({
+      Version = "2012-10-17"
+      Statement = [{
+        Effect    = "Allow"
+        Principal = { Federated = "arn:aws:iam::${local.account_id}:oidc-provider/${local.oidc_issuer}" }
+        Action    = "sts:AssumeRoleWithWebIdentity"
+        Condition = {
+          StringEquals = {
+            "${local.oidc_issuer}:sub" = "system:serviceaccount:${sa.namespace}:${sa.sa_name}"
+            "${local.oidc_issuer}:aud" = "sts.amazonaws.com"
+          }
         }
-      }
-    }]
+      }]
   }) }
 }
 

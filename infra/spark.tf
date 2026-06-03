@@ -76,7 +76,7 @@ resource "kubernetes_namespace_v1" "spark" {
 }
 
 resource "aws_ecr_repository" "spark_vs_polars" {
-  name = "hymaia/spark-vs-polars"
+  name                 = "hymaia/spark-vs-polars"
   image_tag_mutability = "MUTABLE"
-  force_delete = true
+  force_delete         = true
 }

@@ -10,27 +10,27 @@ resource "helm_release" "external_dns" {
   atomic     = true
 
   set {
-    name = "provider"
+    name  = "provider"
     value = "aws"
   }
   set {
-    name = "aws.region"
+    name  = "aws.region"
     value = local.region
   }
   set {
-    name = "aws.zoneType"
+    name  = "aws.zoneType"
     value = "public"
   }
   set {
-    name = "txtOwnerId"
+    name  = "txtOwnerId"
     value = local.prefix
   }
   set {
-    name = "serviceAccount.create"
+    name  = "serviceAccount.create"
     value = "true"
   }
   set {
-    name = "serviceAccount.name"
+    name  = "serviceAccount.name"
     value = "external-dns"
   }
   set {

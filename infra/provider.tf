@@ -3,10 +3,10 @@ terraform {
 
   required_providers {
     aws = {
-      source  = "hashicorp/aws"
+      source = "hashicorp/aws"
     }
     helm = {
-      source  = "hashicorp/helm"
+      source = "hashicorp/helm"
     }
     kubernetes = {
       source = "hashicorp/kubernetes"
@@ -14,10 +14,10 @@ terraform {
   }
 
   backend "s3" {
-    bucket         = "hyma-kube-terraform-state-management-dev"
-    key            = "data-platform/terraform.tfstate"
-    region         = "eu-west-1"
-    encrypt        = true
+    bucket  = "hyma-kube-terraform-state-management-dev"
+    key     = "data-platform/terraform.tfstate"
+    region  = "eu-west-1"
+    encrypt = true
   }
 }
 

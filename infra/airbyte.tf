@@ -1,22 +1,22 @@
 resource "aws_rds_cluster" "airbyte" {
-  cluster_identifier  = "airbyte"
-  engine              = "aurora-postgresql"
-  engine_mode         = "provisioned"
-  engine_version      = "16.11"
-  database_name       = "airbyte"
-  master_username     = "airbyte"
-  master_password     = random_password.airbyte_db.result
+  cluster_identifier = "airbyte"
+  engine             = "aurora-postgresql"
+  engine_mode        = "provisioned"
+  engine_version     = "16.11"
+  database_name      = "airbyte"
+  master_username    = "airbyte"
+  master_password    = random_password.airbyte_db.result
 
   db_subnet_group_name   = local.subnet_group_name
   vpc_security_group_ids = [aws_security_group.airbyte_db.id]
 
-  skip_final_snapshot = true
-  deletion_protection = false
+  skip_final_snapshot     = true
+  deletion_protection     = false
   backup_retention_period = 1
 
   serverlessv2_scaling_configuration {
-    min_capacity = 0.0
-    max_capacity = 2.0
+    min_capacity             = 0.0
+    max_capacity             = 2.0
     seconds_until_auto_pause = 360
   }
 
@@ -59,7 +59,7 @@ resource "aws_secretsmanager_secret" "airbyte_db" {
 resource "aws_secretsmanager_secret_version" "airbyte_db" {
   secret_id = aws_secretsmanager_secret.airbyte_db.id
   secret_string = jsonencode({
-    user = "airbyte"
+    user     = "airbyte"
     password = random_password.airbyte_db.result
   })
 }
@@ -120,7 +120,7 @@ resource "aws_iam_policy" "airbyte_s3" {
 }
 
 resource "aws_iam_role" "airbyte_s3" {
-  name = "airbyte-s3"
+  name               = "airbyte-s3"
   assume_role_policy = local.irsa_assume_policy["airbyte"]
 }
 

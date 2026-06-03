@@ -2,8 +2,8 @@ resource "aws_s3_bucket" "raw" {
   bucket = "hymaia-datalake-raw"
 
   tags = {
-    Name        = "Raw Data Bucket"
-    Layer       = "raw"
+    Name  = "Raw Data Bucket"
+    Layer = "raw"
   }
 
   force_destroy = true
@@ -13,8 +13,8 @@ resource "aws_s3_bucket" "staging" {
   bucket = "hymaia-datalake-staging"
 
   tags = {
-    Name        = "Staging Data Bucket"
-    Layer       = "staging"
+    Name  = "Staging Data Bucket"
+    Layer = "staging"
   }
 
   force_destroy = true
@@ -24,8 +24,8 @@ resource "aws_s3_bucket" "mart" {
   bucket = "hymaia-datalake-mart"
 
   tags = {
-    Name        = "Mart Data Bucket"
-    Layer       = "mart"
+    Name  = "Mart Data Bucket"
+    Layer = "mart"
   }
 
   force_destroy = true
@@ -117,7 +117,7 @@ resource "aws_s3_bucket" "athena_results" {
   bucket = "raw-athena-results"
 
   tags = {
-    Name        = "Athena Query Results"
+    Name = "Athena Query Results"
   }
 }
 
@@ -201,7 +201,7 @@ resource "aws_athena_workgroup" "main" {
   }
 
   tags = {
-    Name        = "Main Athena Workgroup"
+    Name = "Main Athena Workgroup"
   }
 }
 
@@ -227,7 +227,7 @@ resource "aws_athena_workgroup" "agent" {
   }
 
   tags = {
-    Name        = "Agentic Athena Workgroup"
+    Name = "Agentic Athena Workgroup"
   }
 }
 
@@ -249,7 +249,7 @@ resource "aws_iam_role" "athena_user_role" {
   })
 
   tags = {
-    Name        = "Athena User Role"
+    Name = "Athena User Role"
   }
 }
 
