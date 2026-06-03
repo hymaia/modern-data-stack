@@ -62,6 +62,7 @@ mlflow:
           - path: /*
             pathType: ImplementationSpecific
     annotations:
+      alb.ingress.kubernetes.io/group.name: shared-alb
       alb.ingress.kubernetes.io/scheme: internet-facing
       alb.ingress.kubernetes.io/target-type: ip
       alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'

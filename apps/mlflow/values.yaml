@@ -31,6 +31,7 @@ mlflow:
     enabled: false
 
   extraEnvVars:
+    MLFLOW_ALLOW_HOSTS: "mlflow.fcussac.app.hymaia.com"
     MLFLOW_TRACKING_USERNAME:
       valueFrom:
         secretKeyRef:
@@ -61,6 +62,7 @@ mlflow:
           - path: /*
             pathType: ImplementationSpecific
     annotations:
+      alb.ingress.kubernetes.io/group.name: shared-alb
       alb.ingress.kubernetes.io/scheme: internet-facing
       alb.ingress.kubernetes.io/target-type: ip
       alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
